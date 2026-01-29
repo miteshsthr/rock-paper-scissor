@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>RPS Lizard Spock</title>
+  </head>
+  <body>
+    <div id="rulesModal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Rules</h2>
+        <p><strong>Goal:</strong> First to 3 wins.</p>
+        <ul class="rules-list">
+          <li>✂️ <strong>Scissors</strong> beats Paper & Lizard</li>
+          <li>✋ <strong>Paper</strong> beats Rock & Spock</li>
+          <li>✊ <strong>Rock</strong> beats Lizard & Scissors</li>
+          <li>🦎 <strong>Lizard</strong> beats Spock & Paper</li>
+          <li>🖖 <strong>Spock</strong> beats Scissors & Rock</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="game-container">
+      <h1>RPS Lizard Spock</h1>
+      <p class="subtitle">Best of 5 Series</p>
+
+      <div class="scoreboard">
+        <div>You: <span id="user-score">0</span></div>
+        <div>Comp: <span id="comp-score">0</span></div>
+      </div>
+
+      <div class="result-display">
+        <span id="result-text">Make your move</span>
+      </div>
+
+      <div class="choices">
+        <button class="choice-btn" onclick="playGame('rock')">✊</button>
+        <button class="choice-btn" onclick="playGame('paper')">✋</button>
+        <button class="choice-btn" onclick="playGame('scissors')">✌️</button>
+        <button class="choice-btn" onclick="playGame('lizard')">🦎</button>
+        <button class="choice-btn" onclick="playGame('spock')">🖖</button>
+      </div>
+
+      <button class="reset-btn" id="reset-btn" onclick="resetGame()">
+        Play Again
+      </button>
+    </div>
+
+    <script src="./index.js"></script>
+  </body>
+</html>
