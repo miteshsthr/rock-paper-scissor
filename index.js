@@ -1,96 +1,172 @@
-let userScore = 0;
-let compScore = 0;
-let gameActive = true;
-const winningScore = 3;
-
-const userScoreSpan = document.getElementById("user-score");
-const compScoreSpan = document.getElementById("comp-score");
-const resultText = document.getElementById("result-text");
-const resetBtn = document.getElementById("reset-btn");
-const modal = document.getElementById("rulesModal");
-const buttons = document.querySelectorAll(".choice-btn");
-const body = document.body;
+let user = 0,
+  comp = 0,
+  active = true;
+let mode = 3;
+let totalRounds = 3;
+let roundsPlayed = 0;
+let historyList = [];
 
 const rules = {
-  rock: { beats: ["scissors", "lizard"] },
-  paper: { beats: ["rock", "spock"] },
-  scissors: { beats: ["paper", "lizard"] },
-  lizard: { beats: ["spock", "paper"] },
-  spock: { beats: ["scissors", "rock"] },
+  rock: { beats: ["scissors", "lizard"], verb: "crushes" },
+  paper: { beats: ["rock", "spock"], verb: "covers" },
+  scissors: { beats: ["paper", "lizard"], verb: "cuts" },
+  lizard: { beats: ["spock", "paper"], verb: "poisons" },
+  spock: { beats: ["scissors", "rock"], verb: "smashes" },
 };
 
-function closeModal() {
-  modal.style.display = "none";
-}
+const els = {
+  uScore: document.getElementById("uScore"),
+  cScore: document.getElementById("cScore"),
+  roundInfo: document.getElementById("roundInfo"),
+  mainResult: document.getElementById("mainResult"),
+  subResult: document.getElementById("subResult"),
+  reset: document.getElementById("reset"),
+  history: document.getElementById("history"),
+  choices: document.querySelectorAll(".choice-btn"),
+  body: document.body,
+  modal: document.getElementById("rulesModal"),
+};
 
-function getComputerChoice() {
-  const choices = Object.keys(rules);
-  return choices[Math.floor(Math.random() * choices.length)];
-}
+/* --- GAME LOGIC --- */
+els.choices.forEach((btn) => {
+  btn.onclick = () => play(btn.dataset.move);
+});
 
-function playGame(userChoice) {
-  if (!gameActive) return;
+function play(userMove) {
+  if (!active) return;
 
-  const compChoice = getComputerChoice();
+  const compMove = aiMove();
+  let result, verb;
 
-  if (userChoice === compChoice) {
-    updateDisplay("Draw", userChoice, compChoice);
-  } else if (rules[userChoice].beats.includes(compChoice)) {
-    userScore++;
-    userScoreSpan.innerText = userScore;
-    updateDisplay("Win", userChoice, compChoice);
+  if (userMove === compMove) {
+    result = "Draw";
+    verb = "matches";
+  } else if (rules[userMove].beats.includes(compMove)) {
+    user++;
+    result = "Win";
+    verb = rules[userMove].verb;
   } else {
-    compScore++;
-    compScoreSpan.innerText = compScore;
-    updateDisplay("Lose", userChoice, compChoice);
+    comp++;
+    result = "Lose";
+    verb = rules[compMove].verb;
   }
 
-  checkGameOver();
+  roundsPlayed++;
+  updateUI(userMove, compMove, result, verb);
+  checkEnd();
 }
 
-function updateDisplay(result, user, comp) {
-  if (result === "Win") {
-    resultText.innerHTML = `${capitalize(user)} beats ${capitalize(comp)}.<br>You Win Round!`;
-  } else if (result === "Lose") {
-    resultText.innerHTML = `${capitalize(comp)} beats ${capitalize(user)}.<br>You Lose Round.`;
-  } else {
-    resultText.innerHTML = `Both chose ${capitalize(user)}.<br>Draw.`;
-  }
+function aiMove() {
+  let opts = ["rock", "paper", "scissors"];
+  if (mode === 5) opts.push("lizard", "spock");
+  return opts[Math.floor(Math.random() * opts.length)];
 }
 
-function checkGameOver() {
-  if (userScore === winningScore || compScore === winningScore) {
-    gameActive = false;
-    disableButtons();
+function updateUI(u, c, r, v) {
+  els.uScore.innerText = user;
+  els.cScore.innerText = comp;
+  els.roundInfo.innerText = `${roundsPlayed} / ${totalRounds}`;
 
-    if (userScore > compScore) {
-      body.classList.add("series-won");
-      resultText.innerHTML = `<span style="font-size: 1.5rem">🏆 SERIES VICTORY!</span>`;
+  els.mainResult.innerText = r === "Draw" ? "Draw!" : `You ${r}!`;
+  els.mainResult.className = `result-title text-${r.toLowerCase()}`;
+
+  const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1);
+
+  const formatMove = (m) => {
+    if (m === "rock") return "✊";
+    if (m === "paper") return "✋";
+    if (m === "scissors") return "✂️";
+    if (m === "lizard") return "🦎";
+    if (m === "spock") return "🖖";
+    return m;
+  };
+
+  els.subResult.innerText = `${formatMove(u)} ${v} ${formatMove(c)}`;
+
+  historyList.unshift({ u, c, r });
+  if (historyList.length > 5) historyList.pop();
+
+  els.history.innerHTML = historyList
+    .map(
+      (h) =>
+        `<li class="history-item">
+            <span><span class="status-box status-${h.r}"></span>${formatMove(h.u)} vs ${formatMove(h.c)}</span>
+            <span class="text-${h.r.toLowerCase()}">${h.r.toUpperCase()}</span>
+        </li>`,
+    )
+    .join("");
+}
+
+function checkEnd() {
+  if (roundsPlayed >= totalRounds) {
+    active = false;
+    els.choices.forEach((b) => (b.disabled = true));
+    els.reset.style.display = "block";
+
+    if (user > comp) {
+      els.body.classList.add("series-won");
+      els.mainResult.innerText = "🏆 SERIES WON";
+      els.subResult.innerText = `Final Score: ${user} - ${comp}`;
+    } else if (comp > user) {
+      els.body.classList.add("series-lost");
+      els.mainResult.innerText = "💀 SERIES LOST";
+      els.subResult.innerText = `Final Score: ${user} - ${comp}`;
     } else {
-      body.classList.add("series-lost");
-      resultText.innerHTML = `<span style="font-size: 1.5rem">💀 SERIES LOST</span>`;
+      els.body.classList.add("series-draw");
+      els.mainResult.innerText = "🤝 SERIES DRAW";
+      els.subResult.innerText = `Final Score: ${user} - ${comp}`;
     }
-    resetBtn.style.display = "block";
   }
 }
 
-function disableButtons() {
-  buttons.forEach((btn) => (btn.disabled = true));
-}
-
+/* --- RESET & SETTINGS --- */
 function resetGame() {
-  userScore = 0;
-  compScore = 0;
-  gameActive = true;
-  userScoreSpan.innerText = 0;
-  compScoreSpan.innerText = 0;
-  resultText.innerText = "Make your move";
-  resetBtn.style.display = "none";
-  buttons.forEach((btn) => (btn.disabled = false));
+  user = 0;
+  comp = 0;
+  roundsPlayed = 0;
+  active = true;
+  historyList = [];
 
-  body.classList.remove("series-won", "series-lost");
+  els.uScore.innerText = "0";
+  els.cScore.innerText = "0";
+  els.roundInfo.innerText = `0 / ${totalRounds}`;
+
+  els.mainResult.innerText = "Ready";
+  els.mainResult.className = "result-title";
+  els.subResult.innerText = "Select a weapon";
+
+  els.reset.style.display = "none";
+  els.history.innerHTML =
+    '<li style="color:#cbd5e1; font-style:italic;">No moves yet...</li>';
+  els.choices.forEach((b) => (b.disabled = false));
+  els.body.className = "";
 }
 
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
+window.setMode = (m) => {
+  mode = m;
+  setActive("m", m);
+  const extras = document.querySelectorAll(
+    '[data-move="lizard"],[data-move="spock"]',
+  );
+  extras.forEach((b) => b.classList.toggle("hidden", m === 3));
+  resetGame();
+};
+
+window.setSeries = (s) => {
+  totalRounds = s;
+  setActive("s", s);
+  resetGame();
+};
+
+function setActive(prefix, val) {
+  document
+    .querySelectorAll(`.toggle-btn[id^="${prefix}"]`)
+    .forEach((b) => b.classList.remove("active"));
+  document.getElementById(prefix + val).classList.add("active");
 }
+
+/* --- MODAL --- */
+window.toggleRules = () => els.modal.classList.toggle("open");
+els.modal.addEventListener("click", (e) => {
+  if (e.target === els.modal) toggleRules();
+});

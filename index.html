@@ -3,51 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors Pro</title>
     <link rel="stylesheet" href="style.css" />
-    <title>RPS Lizard Spock</title>
   </head>
   <body>
-    <div id="rulesModal" class="modal-overlay">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2>Rules</h2>
-        <p><strong>Goal:</strong> First to 3 wins.</p>
+    <div id="rulesModal" class="modal-overlay open">
+      <div class="modal-card">
+        <button class="close-modal" onclick="toggleRules()">×</button>
+        <h2 class="modal-title">Rules</h2>
         <ul class="rules-list">
-          <li>✂️ <strong>Scissors</strong> beats Paper & Lizard</li>
-          <li>✋ <strong>Paper</strong> beats Rock & Spock</li>
-          <li>✊ <strong>Rock</strong> beats Lizard & Scissors</li>
-          <li>🦎 <strong>Lizard</strong> beats Spock & Paper</li>
-          <li>🖖 <strong>Spock</strong> beats Scissors & Rock</li>
+          <li>Scissors <span class="beat">beats</span> Paper & Lizard</li>
+          <li>Paper <span class="beat">beats</span> Rock & Spock</li>
+          <li>Rock <span class="beat">beats</span> Lizard & Scissors</li>
+          <li>Lizard <span class="beat">beats</span> Spock & Paper</li>
+          <li>Spock <span class="beat">beats</span> Scissors & Rock</li>
+        </ul>
+        <div class="modal-footer">Tap X to start</div>
+      </div>
+    </div>
+
+    <div class="game">
+      <h1>Battle Arena</h1>
+
+      <div class="settings-container">
+        <div class="setting-row">
+          <span class="setting-label">Mode</span>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="m3" onclick="setMode(3)">
+              Classic
+            </button>
+            <button class="toggle-btn" id="m5" onclick="setMode(5)">
+              Expanded
+            </button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-label">Rounds</span>
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="s3" onclick="setSeries(3)">
+              3
+            </button>
+            <button class="toggle-btn" id="s5" onclick="setSeries(5)">5</button>
+            <button class="toggle-btn" id="s7" onclick="setSeries(7)">7</button>
+          </div>
+        </div>
+
+        <button class="rules-btn" onclick="toggleRules()">View Rules</button>
+      </div>
+
+      <div class="scoreboard">
+        <div class="score-box">
+          <span class="score-label">Player</span>
+          <span class="score-val" id="uScore">0</span>
+        </div>
+        <div class="score-box">
+          <span class="score-label">Round</span>
+          <span
+            class="score-val"
+            id="roundInfo"
+            style="color: var(--neutral); font-size: 1.5rem; margin-top: 10px"
+            >0 / 3</span
+          >
+        </div>
+        <div class="score-box">
+          <span class="score-label">Opponent</span>
+          <span class="score-val" id="cScore">0</span>
+        </div>
+      </div>
+
+      <div class="result-area">
+        <div class="result-title" id="mainResult">Ready</div>
+        <div class="result-subtitle" id="subResult">Select a weapon</div>
+      </div>
+
+      <div class="choices">
+        <button class="choice-btn" data-move="rock">✊</button>
+        <button class="choice-btn" data-move="paper">✋</button>
+        <button class="choice-btn" data-move="scissors"><span>✂️</span></button>
+        <button class="choice-btn hidden" data-move="lizard">🦎</button>
+        <button class="choice-btn hidden" data-move="spock">🖖</button>
+      </div>
+
+      <button class="reset-btn" id="reset" onclick="resetGame()">
+        New Series
+      </button>
+
+      <div class="history-panel">
+        <div class="history-title">History</div>
+        <ul class="history-list" id="history">
+          <li style="color: #cbd5e1; font-style: italic">No moves yet...</li>
         </ul>
       </div>
     </div>
 
-    <div class="game-container">
-      <h1>RPS Lizard Spock</h1>
-      <p class="subtitle">Best of 5 Series</p>
+    <a
+      href="https://github.com/miteshsthr/rock-paper-scissor"
+      target="_blank"
+      class="github-link"
+    >
+      <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+        <path
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+        ></path>
+      </svg>
+      Source Code
+    </a>
+<a href="mailto:miteshsutharr@gmail.com?subject=Game Issue" class="issue-btn">
+    Any Issue?
+</a>
 
-      <div class="scoreboard">
-        <div>You: <span id="user-score">0</span></div>
-        <div>Comp: <span id="comp-score">0</span></div>
-      </div>
-
-      <div class="result-display">
-        <span id="result-text">Make your move</span>
-      </div>
-
-      <div class="choices">
-        <button class="choice-btn" onclick="playGame('rock')">✊</button>
-        <button class="choice-btn" onclick="playGame('paper')">✋</button>
-        <button class="choice-btn" onclick="playGame('scissors')">✌️</button>
-        <button class="choice-btn" onclick="playGame('lizard')">🦎</button>
-        <button class="choice-btn" onclick="playGame('spock')">🖖</button>
-      </div>
-
-      <button class="reset-btn" id="reset-btn" onclick="resetGame()">
-        Play Again
-      </button>
-    </div>
-
-    <script src="./index.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
