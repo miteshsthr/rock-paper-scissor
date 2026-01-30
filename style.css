@@ -126,7 +126,7 @@ h1 {
   color: var(--primary);
 }
 
-/* --- SCOREBOARD --- */
+ 
 .scoreboard {
   display: flex;
   justify-content: space-between;
@@ -391,7 +391,7 @@ h1 {
 .issue-btn {
     position: fixed;
     bottom: 20px;
-    left: 20px; /* Fixed to Bottom Left */
+    left: 20px;  
     text-decoration: none;
     color: var(--neutral);
     font-size: 0.85rem;
@@ -405,7 +405,7 @@ h1 {
 }
 
 .issue-btn:hover {
-    color: var(--danger); /* Turns Red on Hover */
+    color: var(--danger);  
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
