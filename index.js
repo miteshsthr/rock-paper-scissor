@@ -27,7 +27,7 @@ const els = {
   modal: document.getElementById("rulesModal"),
 };
 
-/* --- GAME LOGIC --- */
+ 
 els.choices.forEach((btn) => {
   btn.onclick = () => play(btn.dataset.move);
 });
@@ -109,7 +109,7 @@ function checkEnd() {
       els.subResult.innerText = `Final Score: ${user} - ${comp}`;
     } else if (comp > user) {
       els.body.classList.add("series-lost");
-      els.mainResult.innerText = "💀 SERIES LOST";
+      els.mainResult.innerText = "SERIES LOST";
       els.subResult.innerText = `Final Score: ${user} - ${comp}`;
     } else {
       els.body.classList.add("series-draw");
@@ -119,7 +119,7 @@ function checkEnd() {
   }
 }
 
-/* --- RESET & SETTINGS --- */
+ 
 function resetGame() {
   user = 0;
   comp = 0;
